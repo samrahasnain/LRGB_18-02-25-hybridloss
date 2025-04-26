@@ -15,17 +15,19 @@ class ImageDataTrain(data.Dataset):
         self.sal_root = data_root
         self.sal_source = data_list
         self.image_size = image_size
-
-        with open(self.sal_source, 'r') as f:
+        self.sal_list = [f for f in os.listdir(self.data_root) if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
+        self.gt_list = [f for f in os.listdir(self.data_list) if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
+        self.sal_num = len(self.sal_list)
+        '''with open(self.sal_source, 'r') as f:
             self.sal_list = [x.strip() for x in f.readlines()]
 
-        self.sal_num = len(self.sal_list)
+        self.sal_num = len(self.sal_list)'''
 
     def __getitem__(self, item):
         # sal data loading
-        im_name = self.sal_list[item % self.sal_num].split()[0]
-        de_name = self.sal_list[item % self.sal_num].split()[0]
-        gt_name = self.sal_list[item % self.sal_num].split()[1]
+        im_name = self.sal_list[item]
+        de_name = self.image_list[item]
+        gt_name = self.gt_list[item]
         #print(os.path.join(self.sal_root, im_name),os.path.join(self.sal_root, gt_name))
         sal_image , im_size= load_image(os.path.join(self.sal_root, im_name), self.image_size)
         sal_depth, im_size = load_image(os.path.join(self.sal_root, de_name), self.image_size)
