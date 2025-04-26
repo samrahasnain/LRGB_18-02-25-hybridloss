@@ -15,8 +15,8 @@ class ImageDataTrain(data.Dataset):
         self.sal_root = data_root
         self.sal_source = data_list
         self.image_size = image_size
-        self.sal_list = [f for f in os.listdir(self.data_root) if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
-        self.gt_list = [f for f in os.listdir(self.data_list) if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
+        self.sal_list = [f for f in os.listdir(self.sal_root) if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
+        self.gt_list = [f for f in os.listdir(self.sal_source) if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
         self.sal_num = len(self.sal_list)
         '''with open(self.sal_source, 'r') as f:
             self.sal_list = [x.strip() for x in f.readlines()]
@@ -31,7 +31,7 @@ class ImageDataTrain(data.Dataset):
         #print(os.path.join(self.sal_root, im_name),os.path.join(self.sal_root, gt_name))
         sal_image , im_size= load_image(os.path.join(self.sal_root, im_name), self.image_size)
         sal_depth, im_size = load_image(os.path.join(self.sal_root, de_name), self.image_size)
-        sal_label,sal_edge = load_sal_label(os.path.join(self.sal_root, gt_name), self.image_size)
+        sal_label,sal_edge = load_sal_label(os.path.join(self.sal_source, gt_name), self.image_size)
 
         sal_image, sal_depth, sal_label = cv_random_crop(sal_image, sal_depth, sal_label, self.image_size)
         sal_image = sal_image.transpose((2, 0, 1))
