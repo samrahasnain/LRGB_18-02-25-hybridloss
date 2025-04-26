@@ -563,13 +563,16 @@ class Solver(object):
                 
                 self.optimizer.zero_grad()
                 sal_label_coarse = F.interpolate(sal_label, (10, 10), mode='bilinear', align_corners=True)
-                sal_final, coarse_sal_rgb, sal_edge_rgbd0 = self.net(sal_image)
+                sal_label_coarse1 = F.interpolate(sal_label, (20, 20), mode='bilinear', align_corners=True)
+                sal_final, coarse_sal_rgb, sal_edge_rgbd0,rgb_h1,rgb_m1 = self.net(sal_image)
                 
                 sal_loss_coarse_rgb = F.binary_cross_entropy_with_logits(coarse_sal_rgb, sal_label_coarse, reduction='sum')
+                sal_loss_rgb_h1 = F.binary_cross_entropy_with_logits(rgb_h1, sal_label_coarse, reduction='sum')
+                sal_loss_rgb_m1  = F.binary_cross_entropy_with_logits(rgb_m1 , sal_label_coarse1, reduction='sum')
                 sal_final_loss = F.binary_cross_entropy_with_logits(sal_final, sal_label, reduction='sum')
                 edge_loss_rgbd0 = F.smooth_l1_loss(sal_edge_rgbd0, sal_edge)
                 
-                sal_loss = (sal_final_loss + edge_loss_rgbd0 + sal_loss_coarse_rgb) / (self.iter_size * self.config.batch_size)
+                sal_loss = (sal_final_loss + edge_loss_rgbd0 + sal_loss_coarse_rgb + sal_loss_rgb_h1+ sal_loss_rgb_m1) / (self.iter_size * self.config.batch_size)
                 r_sal_loss_item += sal_loss.item() * sal_image.size(0)
                 
                 sal_loss.backward()
