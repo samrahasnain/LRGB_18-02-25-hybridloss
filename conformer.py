@@ -250,7 +250,7 @@ class Decoder(nn.Module):
         sal_final=edge_rgbd0+self.up21(self.up2(self.up2(self.up2((rgb_m+(self.up2(rgb_h)))))))
         #print(edge_rgbd0.shape, sal_final.shape)
 
-        return sal_final,edge_rgbd0
+        return sal_final,edge_rgbd0,rgb_h,rgb_m
 
 
 class JL_DCF(nn.Module):
@@ -262,7 +262,7 @@ class JL_DCF(nn.Module):
         self.coarse_layer=coarse_layer
         self.gde_layers=gde_layers
         self.decoder=decoder
-        self.final_conv=nn.Conv2d(8,1,1,1,0)
+        #self.final_conv=nn.Conv2d(8,1,1,1,0)
         
     def forward(self, f_all):
         conv1r, conv2r, conv3r, conv4r = self.JLModule(f_all)
@@ -270,9 +270,9 @@ class JL_DCF(nn.Module):
         coarse_sal_rgb=self.coarse_layer(conv4r)
         rgb_h,rgb_m=self.gde_layers(conv3r, conv4r, coarse_sal_rgb)
 
-        sal_final,edge_rgbd0=self.decoder(lde_out ,rgb_h,rgb_m)
+        sal_final,edge_rgbd0,rgb_h1,rgb_m1=self.decoder(lde_out ,rgb_h,rgb_m)
 
-        return sal_final,coarse_sal_rgb,edge_rgbd0
+        return sal_final,coarse_sal_rgb,edge_rgbd0,rgb_h1,rgb_m1
         #,lde_out,rgb_h,rgb_m
 
 def build_model(network='conformer', base_model_cfg='conformer'):
