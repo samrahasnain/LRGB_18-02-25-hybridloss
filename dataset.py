@@ -26,7 +26,7 @@ class ImageDataTrain(data.Dataset):
     def __getitem__(self, item):
         # sal data loading
         im_name = self.sal_list[item]
-        de_name = self.image_list[item]
+        de_name = self.sal_list[item]
         gt_name = self.gt_list[item]
         #print(os.path.join(self.sal_root, im_name),os.path.join(self.sal_root, gt_name))
         sal_image , im_size= load_image(os.path.join(self.sal_root, im_name), self.image_size)
